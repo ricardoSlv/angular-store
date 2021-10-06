@@ -1,10 +1,16 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  template: `<app-top-bar> </app-top-bar>
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>`
 })
-export class AppComponent {
-  title = 'angular-tour-of-heroes';
-}
+export class AppComponent {}
+
+/*
+Copyright Google LLC. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that
+can be found in the LICENSE file at https://angular.io/license
+*/
