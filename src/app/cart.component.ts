@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { Component } from '@angular/core'
+import { FormBuilder } from '@angular/forms'
+
 import { Product, products } from 'app/products'
 import { CartService } from 'app/cart.service'
+import { CurrencyPipe } from '@angular/common'
 
 @Component({
   selector: 'app-cart',
@@ -14,35 +16,56 @@ import { CartService } from 'app/cart.service'
         <th>Name</th>
         <th>Price</th>
       </tr>
-      <tr *ngFor="let product of products">
-        <td>{{ product.name }}</td>
-        <td>{{ product.price | currency: 'EUR' }}</td>
+      <tr *ngFor="let item of items">
+        <td>{{ item.name }}</td>
+        <td>{{ item.price | currency: 'EUR' }}</td>
       </tr>
       <tr></tr>
       <tr>
         <td>Total</td>
         <td>{{ priceTotal() | currency: 'EUR' }}</td>
       </tr>
-    </table>`
+    </table>
+    <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+      <div>
+        <label for="name"> Name </label>
+        <input id="name" type="text" formControlName="name" />
+      </div>
+
+      <div>
+        <label for="address"> Address </label>
+        <input id="address" type="text" formControlName="address" />
+      </div>
+      <button class="button" type="submit">Purchase</button>
+    </form>`
 })
-export class CartComponent implements OnInit {
-  products: Product[]
+export class CartComponent {
+  items = this.cartService.getItems()
 
-  constructor(private cartService: CartService) {
-    this.products = []
-  }
+  checkoutForm = this.formBuilder.group({
+    name: '',
+    address: ''
+  })
 
-  ngOnInit() {
-    this.products = this.cartService.getItems()
-  }
-
-  addToCart(product: Product) {
-    window.alert('Your product has been added to the cart!')
-  }
+  constructor(
+    private formBuilder: FormBuilder,
+    private cartService: CartService
+  ) {}
 
   priceTotal() {
-    products.map((p) => console.table(p))
+    return this.items.reduce((value, product) => value + product.price, 0)
+  }
 
-    return this.products.reduce((value, product) => value + product.price, 0)
+  onSubmit() {
+    // Process checkout data here
+    this.items = this.cartService.clearCart()
+    alert(
+      'Your order has been submitted ' +
+        JSON.stringify({
+          ...this.checkoutForm.value,
+          total: this.priceTotal()
+        })
+    )
+    this.checkoutForm.reset()
   }
 }

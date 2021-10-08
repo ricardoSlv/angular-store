@@ -6,7 +6,7 @@ import { Product } from './products'
   providedIn: 'root'
 })
 export class CartService {
-  items: Product[] = []
+  items: Product[] = JSON.parse(localStorage.getItem('cart') || '[]')
 
   constructor(private http: HttpClient) {}
 
@@ -18,6 +18,7 @@ export class CartService {
 
   addToCart(product: Product) {
     this.items.push(product)
+    localStorage.setItem('cart', JSON.stringify(this.items))
   }
 
   getItems() {
@@ -26,6 +27,7 @@ export class CartService {
 
   clearCart() {
     this.items = []
+    localStorage.setItem('cart', '[]')
     return this.items
   }
 }
